@@ -14,6 +14,10 @@ return {
     'jose-elias-alvarez/null-ls.nvim',
     lazy=false,
   },
+  {
+   'numtostr/BufOnly.nvim',
+    lazy=false,
+  },
 
   -- These are some examples, uncomment them if you want to see them work!
   {
@@ -38,7 +42,8 @@ return {
   {
     "ThePrimeagen/vim-be-good",
     lazy=false
-  }
+  },
+
   --
   -- {
   -- 	"nvim-treesitter/nvim-treesitter",
