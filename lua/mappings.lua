@@ -46,3 +46,10 @@ map("i", "<C-v>", '<C-r>+', { desc = "Paste from system clipboard" })
 
 -- Close all buffers except current
 map("n", "<leader>q", "<CMD>BufOnly<CR>", { desc = "Close all buffers except current" })
+
+-- Vertical nav
+map('n', '<C-u>', '<C-u>zz', { noremap = true, silent = true })
+map('n', '<C-d>', '<C-d>zz', { noremap = true, silent = true })
+
+-- Terminal mode mapping
+map('t', '<C-t>', '<C-\\><C-n>', { noremap = true, silent = true, desc = "Switch from terminal to normal mode" })

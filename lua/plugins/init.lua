@@ -44,6 +44,8 @@ return {
     lazy=false
   },
 
+  { "jose-elias-alvarez/null-ls.nvim", dependencies = { "nvim-lua/plenary.nvim" } },  -- Null-ls with dependency
+
   --
   -- {
   -- 	"nvim-treesitter/nvim-treesitter",
