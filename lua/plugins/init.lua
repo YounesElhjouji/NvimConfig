@@ -11,41 +11,72 @@ return {
     lazy = false,
   },
   {
-    'jose-elias-alvarez/null-ls.nvim',
-    lazy=false,
+    "nvimtools/none-ls.nvim",
+    event = "VeryLazy",
+    opts = function()
+      return require "configs.null-ls"
+    end,
   },
   {
-   'numtostr/BufOnly.nvim',
-    lazy=false,
+    "numtostr/BufOnly.nvim",
+    lazy = false,
   },
-
-  -- These are some examples, uncomment them if you want to see them work!
   {
-   "neovim/nvim-lspconfig",
-   config = function()
-     require("nvchad.configs.lspconfig").defaults()
-     require "configs.lspconfig"
-   end,
+    "neovim/nvim-lspconfig",
+    config = function()
+      require("nvchad.configs.lspconfig").defaults()
+      require "configs.lspconfig"
+    end,
   },
-
   {
     "williamboman/mason.nvim",
     opts = {
       ensure_installed = {
-        "lua-language-server", "stylua",
-        "html-lsp", "css-lsp" , "prettier",
-        "ruff-lsp", "black", "isort"
+        "lua-language-server",
+        "stylua",
+        "html-lsp",
+        "css-lsp",
+        "prettier",
+        "ruff-lsp",
+        "black",
+        "isort",
+        "typescript-language-server",
+        "tailwindcss-language-server",
       },
     },
   },
-
   {
     "ThePrimeagen/vim-be-good",
-    lazy=false
+    lazy = false,
   },
-
-  { "jose-elias-alvarez/null-ls.nvim", dependencies = { "nvim-lua/plenary.nvim" } },  -- Null-ls with dependency
-
+  {
+    "windwp/nvim-ts-autotag",
+    ft = {
+      "javascript",
+      "typescript",
+      "javascriptreact",
+      "typescriptreact",
+    },
+    config = function()
+      require("nvim-ts-autotag").setup()
+    end,
+  },
+  -- lazy.nvim
+  {
+    "folke/noice.nvim",
+    event = "VeryLazy",
+    opts = {
+      -- add any options here
+    },
+    dependencies = {
+      -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+      "MunifTanjim/nui.nvim",
+      -- OPTIONAL:
+      --   `nvim-notify` is only needed, if you want to use the notification view.
+      --   If not available, we use `mini` as the fallback
+      "rcarriga/nvim-notify",
+    },
+  },
   --
   -- {
   -- 	"nvim-treesitter/nvim-treesitter",
