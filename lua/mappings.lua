@@ -54,3 +54,26 @@ map('n', '<C-d>', '<C-d>zz', { noremap = true, silent = true })
 
 -- Terminal mode mapping
 map('t', '<C-t>', '<C-\\><C-n>', { noremap = true, silent = true, desc = "Switch from terminal to normal mode" })
+
+
+-- Line extremes navigation
+map("n", "G", "Gzz", { noremap = true, silent = true, desc = "Go to end of file and center" })
+map("n", "H", "^", { noremap = true, silent = true, desc = "Move to the beginning of the line" })
+map("n", "L", "$", { noremap = true, silent = true, desc = "Move to the end of the line" })
+map("n", "dH", "d^", { noremap = true, silent = true, desc = "Delete to the beginning of the line" })
+map("n", "dL", "d$", { noremap = true, silent = true, desc = "Delete to the end of the line" })
+map("n", "cH", "c^", { noremap = true, silent = true, desc = "Change to the beginning of the line" })
+map("n", "cL", "c$", { noremap = true, silent = true, desc = "Change to the end of the line" })
+map("n", "yH", "y^", { noremap = true, silent = true, desc = "Yank to the beginning of the line" })
+map("n", "yL", "y$", { noremap = true, silent = true, desc = "Yank to the end of the line" })
+map("v", "H", "^", { noremap = true, silent = true, desc = "Select to the beginning of the line" })
+map("v", "L", "$", { noremap = true, silent = true, desc = "Select to the end of the line" })
+
+-- Magic search
+map("n", "/", "/\\v", { noremap = true, silent = true, desc = "Start search in 'very magic' mode" })
+
+-- Open Diagnostics
+map("n", "<leader>df", vim.diagnostic.open_float, { noremap = true, silent = true, desc = "Show diagnostics in a floating window" })
+
+-- Noice dismiss
+map("n", "<leader>dd", ":NoiceDismiss<CR>", { noremap = true, silent = true, desc = "Dismiss all Noice messages" })

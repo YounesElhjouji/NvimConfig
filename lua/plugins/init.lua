@@ -1,15 +1,10 @@
 return {
-  {
-    "stevearc/conform.nvim",
-    -- event = 'BufWritePre', -- uncomment for format on save
-    config = function()
-      require "configs.conform"
-    end,
-  },
-  {
-    "tpope/vim-fugitive",
-    lazy = false,
-  },
+  -- {
+  --   "stevearc/conform.nvim",
+  --   config = function()
+  --     require "configs.conform"
+  --   end,
+  -- },
   {
     "nvimtools/none-ls.nvim",
     event = "VeryLazy",
@@ -46,10 +41,6 @@ return {
     },
   },
   {
-    "ThePrimeagen/vim-be-good",
-    lazy = false,
-  },
-  {
     "windwp/nvim-ts-autotag",
     ft = {
       "javascript",
@@ -63,28 +54,17 @@ return {
   },
   -- lazy.nvim
   {
-    "folke/noice.nvim",
-    event = "VeryLazy",
+    "j-hui/fidget.nvim",
     opts = {
-      -- add any options here
-    },
-    dependencies = {
-      -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
-      "MunifTanjim/nui.nvim",
-      -- OPTIONAL:
-      --   `nvim-notify` is only needed, if you want to use the notification view.
-      --   If not available, we use `mini` as the fallback
-      "rcarriga/nvim-notify",
+      -- options
     },
   },
-  --
-  -- {
-  -- 	"nvim-treesitter/nvim-treesitter",
-  -- 	opts = {
-  -- 		ensure_installed = {
-  -- 			"vim", "lua", "vimdoc",
-  --      "html", "css"
-  -- 		},
-  -- 	},
-  -- },
+  {
+    "MeanderingProgrammer/render-markdown.nvim",
+    ft = { "markdown" },
+    dependencies = { "nvim-treesitter/nvim-treesitter", "echasnovski/mini.nvim" }, -- if you use the mini.nvim suite
+    ---@module 'render-markdown'
+    ---@type render.md.UserConfig
+    opts = {},
+  },
 }
