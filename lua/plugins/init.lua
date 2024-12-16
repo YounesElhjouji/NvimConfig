@@ -1,10 +1,4 @@
 return {
-  -- {
-  --   "stevearc/conform.nvim",
-  --   config = function()
-  --     require "configs.conform"
-  --   end,
-  -- },
   {
     "nvimtools/none-ls.nvim",
     event = "VeryLazy",
@@ -13,32 +7,19 @@ return {
     end,
   },
   {
+    "folke/noice.nvim",
+    event = "VeryLazy",
+    opts = {
+      -- add any options here
+    },
+    dependencies = {
+      "MunifTanjim/nui.nvim",
+      "rcarriga/nvim-notify",
+    },
+  },
+  {
     "numtostr/BufOnly.nvim",
     lazy = false,
-  },
-  {
-    "neovim/nvim-lspconfig",
-    config = function()
-      require("nvchad.configs.lspconfig").defaults()
-      require "configs.lspconfig"
-    end,
-  },
-  {
-    "williamboman/mason.nvim",
-    opts = {
-      ensure_installed = {
-        "lua-language-server",
-        "stylua",
-        "html-lsp",
-        "css-lsp",
-        "prettier",
-        "ruff-lsp",
-        "black",
-        "isort",
-        "typescript-language-server",
-        "tailwindcss-language-server",
-      },
-    },
   },
   {
     "windwp/nvim-ts-autotag",
@@ -51,13 +32,6 @@ return {
     config = function()
       require("nvim-ts-autotag").setup()
     end,
-  },
-  -- lazy.nvim
-  {
-    "j-hui/fidget.nvim",
-    opts = {
-      -- options
-    },
   },
   {
     "MeanderingProgrammer/render-markdown.nvim",
