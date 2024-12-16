@@ -37,3 +37,5 @@ vim.schedule(function()
   require "configs"
   require "mappings"
 end)
+
+

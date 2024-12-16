@@ -8,15 +8,15 @@ map({ "n", "x" }, ":", ";", { desc = "Next search movement" })
 map({ "n", "x" }, ";", ":", { desc = "CMD enter command mode" })
 map("i", "jk", "<ESC>")
 
--- LSP mappings
-map("n", "gd", "<CMD>lua vim.lsp.buf.definition()<CR>")
-map("n", "gD", "<CMD>lua vim.lsp.buf.declaration()<CR>")
-map("n", "gi", "<CMD>lua vim.lsp.buf.implementation()<CR>")
-map("n", "gr", "<CMD>lua vim.lsp.buf.references()<CR>")
-map("n", "K", "<CMD>lua vim.lsp.buf.hover()<CR>")
-map("n", "gR", "<CMD>lua vim.lsp.buf.rename()<CR>")
-map("n", "ga", "<CMD>lua vim.lsp.buf.code_action()<CR>")
-map("n", "<leader>e", "<CMD>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>")
+-- -- LSP mappings
+-- map("n", "gd", "<CMD>lua vim.lsp.buf.definition()<CR>")
+-- map("n", "gD", "<CMD>lua vim.lsp.buf.declaration()<CR>")
+-- map("n", "gi", "<CMD>lua vim.lsp.buf.implementation()<CR>")
+-- map("n", "gr", "<CMD>lua vim.lsp.buf.references()<CR>")
+-- map("n", "K", "<CMD>lua vim.lsp.buf.hover()<CR>")
+-- map("n", "gR", "<CMD>lua vim.lsp.buf.rename()<CR>")
+-- map("n", "ga", "<CMD>lua vim.lsp.buf.code_action()<CR>")
+-- map("n", "<leader>e", "<CMD>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>")
 
 -- Quickfix list mappings
 map("n", "]q", ":cnext<CR>", { desc = "Next quickfix item" })
@@ -54,7 +54,6 @@ map('n', '<C-d>', '<C-d>zz', { noremap = true, silent = true })
 
 -- Terminal mode mapping
 map('t', '<C-t>', '<C-\\><C-n>', { noremap = true, silent = true, desc = "Switch from terminal to normal mode" })
-
 
 -- Line extremes navigation
 map("n", "G", "Gzz", { noremap = true, silent = true, desc = "Go to end of file and center" })
