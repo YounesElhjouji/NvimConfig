@@ -1,7 +1,7 @@
 vim.api.nvim_create_autocmd({ "VimEnter" }, {
-  callback = function (data)
-   if vim.fn.isdirectory(data.file) == 1 then
-    require('nvim-tree.api').tree.open()
+  callback = function(data)
+    if vim.fn.isdirectory(data.file) == 1 then
+      require('nvim-tree.api').tree.open()
     end
   end,
   -- this fires on VimEnter regardless of filename, so check the directory
@@ -33,4 +33,15 @@ vim.api.nvim_create_autocmd("RecordingEnter", {
 vim.api.nvim_create_autocmd("RecordingLeave", {
   callback = notify_macro_end,
   desc = "Notify when macro recording stops"
+})
+
+-- Exit nvim tree when leaving its window
+vim.api.nvim_create_autocmd("WinLeave", {
+  pattern = "*",
+  callback = function()
+    if require("nvim-tree.view").is_visible() then
+      vim.cmd("NvimTreeClose")
+    end
+  end,
+  desc = "Close nvim-tree when cursor leaves the sidebar",
 })

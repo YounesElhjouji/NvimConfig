@@ -15,7 +15,7 @@ map("i", "jk", "<ESC>")
 -- map("n", "gr", "<CMD>lua vim.lsp.buf.references()<CR>")
 -- map("n", "K", "<CMD>lua vim.lsp.buf.hover()<CR>")
 map("n", "gR", "<CMD>lua vim.lsp.buf.rename()<CR>")
--- map("n", "ga", "<CMD>lua vim.lsp.buf.code_action()<CR>")
+map("n", "ga", "<CMD>lua vim.lsp.buf.code_action()<CR>")
 -- map("n", "<leader>e", "<CMD>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>")
 
 -- Quickfix list mappings
@@ -32,7 +32,7 @@ local function write_and_make()
   -- Write all buffers
   vim.cmd("wall")
   -- Open the NvChad terminal
-  require("nvchad.term").new { pos = "float", id = "floa", cmd ='make' }
+  require("nvchad.term").new { pos = "float", id = "floa", cmd = 'make' }
   -- Switch to the terminal buffer
 end
 map("n", "<leader>m", write_and_make, { desc = "Write all buffers and run make" })
@@ -72,7 +72,19 @@ map("v", "L", "$", { noremap = true, silent = true, desc = "Select to the end of
 map("n", "/", "/\\v", { noremap = true, silent = true, desc = "Start search in 'very magic' mode" })
 
 -- Open Diagnostics
-map("n", "<leader>df", vim.diagnostic.open_float, { noremap = true, silent = true, desc = "Show diagnostics in a floating window" })
+map("n", "<leader>df", vim.diagnostic.open_float,
+  { noremap = true, silent = true, desc = "Show diagnostics in a floating window" })
 
 -- Noice dismiss
 map("n", "<leader>dd", ":NoiceDismiss<CR>", { noremap = true, silent = true, desc = "Dismiss all Noice messages" })
+
+-- Harpoon mappings (short)
+local harpoon_mark = require("harpoon.mark")
+local harpoon_ui = require("harpoon.ui")
+
+map("n", "<leader>a", harpoon_mark.add_file, { desc = "Add file to Harpoon" })
+map("n", "<leader>h", harpoon_ui.toggle_quick_menu, { desc = "Toggle Harpoon menu" })
+map("n", "<leader>1", function() harpoon_ui.nav_file(1) end, { desc = "Go to Harpoon mark 1" })
+map("n", "<leader>2", function() harpoon_ui.nav_file(2) end, { desc = "Go to Harpoon mark 2" })
+map("n", "<leader>3", function() harpoon_ui.nav_file(3) end, { desc = "Go to Harpoon mark 3" })
+map("n", "<leader>4", function() harpoon_ui.nav_file(4) end, { desc = "Go to Harpoon mark 4" })
