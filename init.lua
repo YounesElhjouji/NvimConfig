@@ -10,7 +10,6 @@ if not vim.loop.fs_stat(lazypath) then
 end
 
 vim.opt.rtp:prepend(lazypath)
-
 require "configs"
 local lazy_config = require "configs.lazy"
 -- load plugins
@@ -37,5 +36,3 @@ vim.schedule(function()
   require "configs"
   require "mappings"
 end)
-
-

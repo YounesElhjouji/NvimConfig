@@ -1,17 +1,10 @@
 return {
-  -- {
-  --   "nvimtools/none-ls.nvim",
-  --   event = "VeryLazy",
-  --   opts = function()
-  --     return require "configs.null-ls"
-  --   end,
-  -- },
   {
     "folke/noice.nvim",
     event = "VeryLazy",
-    opts = {
-      -- add any options here
-    },
+    config = function()
+      require("configs.noice")
+    end,
     dependencies = {
       "hrsh7th/nvim-cmp",
       "MunifTanjim/nui.nvim",
@@ -25,18 +18,27 @@ return {
       require "configs.lspconfig"
     end,
   },
+  { "nvim-treesitter/nvim-treesitter" },
+  {
+    "nvimtools/none-ls.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    ft = { "javascript", "javascriptreact", "typescript", "typescriptreact", "json", "css", "scss", "html", "yaml", "markdown" },
+    config = function()
+      require("configs.null-ls")
+    end,
+  },
   {
     "williamboman/mason.nvim",
     opts = {
       ensure_installed = {
-        "lua-language-server",
         "stylua",
         "html-lsp",
         "css-lsp",
-        "prettier",
+        "prettierd",
         "ruff",
         "black",
         "isort",
+        "ts_ls",
         "typescript-language-server",
         "tailwindcss-language-server",
       },

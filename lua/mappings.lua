@@ -14,7 +14,7 @@ map("i", "jk", "<ESC>")
 -- map("n", "gi", "<CMD>lua vim.lsp.buf.implementation()<CR>")
 -- map("n", "gr", "<CMD>lua vim.lsp.buf.references()<CR>")
 -- map("n", "K", "<CMD>lua vim.lsp.buf.hover()<CR>")
--- map("n", "gR", "<CMD>lua vim.lsp.buf.rename()<CR>")
+map("n", "gR", "<CMD>lua vim.lsp.buf.rename()<CR>")
 -- map("n", "ga", "<CMD>lua vim.lsp.buf.code_action()<CR>")
 -- map("n", "<leader>e", "<CMD>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>")
 
