@@ -1,8 +1,13 @@
-local none_ls = require("null-ls")
+local null_ls = require("null-ls")
 
-none_ls.setup({
+null_ls.setup({
   sources = {
-    none_ls.builtins.formatting.prettierd, -- Use prettierd for formatting
+    -- Existing prettierd source
+    null_ls.builtins.formatting.prettierd, -- Prettierd for JS/TS/HTML/CSS
+
+    -- Add Python formatters
+    null_ls.builtins.formatting.black, -- Black for Python formatting
+    null_ls.builtins.formatting.isort, -- isort for organizing Python imports
   },
   on_attach = function(client, bufnr)
     if client.supports_method("textDocument/formatting") then

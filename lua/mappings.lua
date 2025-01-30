@@ -29,11 +29,8 @@ map("n", "<leader>cf", ":cfdo %s/<C-r><C-w>//g<CR>", { desc = "Find and replace 
 
 -- My write mappings
 local function write_and_make()
-  -- Write all buffers
   vim.cmd("wall")
-  -- Open the NvChad terminal
   require("nvchad.term").new { pos = "float", id = "floa", cmd = 'make' }
-  -- Switch to the terminal buffer
 end
 map("n", "<leader>m", write_and_make, { desc = "Write all buffers and run make" })
 map({ "n", "i", "v" }, "<C-a>", "<cmd> wall <cr>")
@@ -88,3 +85,10 @@ map("n", "<leader>1", function() harpoon_ui.nav_file(1) end, { desc = "Go to Har
 map("n", "<leader>2", function() harpoon_ui.nav_file(2) end, { desc = "Go to Harpoon mark 2" })
 map("n", "<leader>3", function() harpoon_ui.nav_file(3) end, { desc = "Go to Harpoon mark 3" })
 map("n", "<leader>4", function() harpoon_ui.nav_file(4) end, { desc = "Go to Harpoon mark 4" })
+
+-- global replace from clipboard
+map("n", "<C-t>", "ggVGp:w<CR>", { noremap = true, desc = "Replace page with clipboard content and save file" })
+
+
+-- Map <leader>cb to copy all visible buffers' content to clipboard
+map("n", "<leader>cb", "<CMD>CopyBuffersToClipboard<CR>", { desc = "Copy all visible buffers to clipboard" })

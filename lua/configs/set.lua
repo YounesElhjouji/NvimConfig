@@ -21,16 +21,18 @@ vim.opt.incsearch = true
 vim.opt.termguicolors = true
 
 vim.opt.scrolloff = 8
-vim.opt.signcolumn = "yes"
+vim.opt.signcolumn = "no"
 vim.opt.isfname:append("@-@")
 
 vim.opt.updatetime = 50
 
 vim.opt.colorcolumn = "80"
 
-vim.opt.foldmethod = 'expr'
-vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
-vim.opt.foldlevelstart = 99
- 
 vim.opt.ignorecase = false
 vim.opt.smartcase = false
+
+-- fold config
+vim.opt.foldmethod = "syntax"
+vim.opt.foldtext = ""
+vim.opt.foldlevel = 99
+vim.opt.foldnestmax = 4

@@ -15,7 +15,6 @@ return {
     "ThePrimeagen/harpoon",
     config = function()
       require("harpoon").setup({
-        -- Optional: Customize your Harpoon settings here
         menu = {
           width = vim.api.nvim_win_get_width(0) - 20,
         },
@@ -61,15 +60,23 @@ return {
   },
   {
     "windwp/nvim-ts-autotag",
-    ft = {
-      "javascript",
-      "typescript",
-      "javascriptreact",
-      "typescriptreact",
-    },
+    event = "InsertEnter",
+    dependencies = "nvim-treesitter/nvim-treesitter",
+    lazy = false
+  },
+  -- LuaSnip and friendly snippets for snippets
+  {
+    "L3MON4D3/LuaSnip",
+    version = "v2.*",
+    build = "make install_jsregexp",
     config = function()
-      require("nvim-ts-autotag").setup()
+      local luasnip = require("luasnip")
+      luasnip.filetype_extend("typescriptreact", { "html" })
+      require("luasnip.loaders.from_vscode").lazy_load()
     end,
+  },
+  {
+    "rafamadriz/friendly-snippets",
   },
   {
     "MeanderingProgrammer/render-markdown.nvim",
