@@ -79,9 +79,6 @@ vim.api.nvim_create_user_command('CopyHarpoonFilesToClipboard', CopyHarpoonFiles
 vim.api.nvim_create_user_command('CopyGitFilesToClipboard', CopyGitFilesToClipboard, {})
 vim.api.nvim_create_user_command('CopyQuickfixFilesToClipboard', CopyQuickfixFilesToClipboard, {})
 vim.api.nvim_create_user_command('CopyDirectoryFilesToClipboard', function(opts)
-  if opts.args == "" then
-    print("Please specify a directory.")
-  else
-    CopyDirectoryFilesToClipboard(opts.args)
-  end
-end, { nargs = 1 })
+  local directory = opts.args ~= "" and opts.args or vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":h")
+  CopyDirectoryFilesToClipboard(directory)
+end, { nargs = "?" })

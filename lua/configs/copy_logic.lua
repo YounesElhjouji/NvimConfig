@@ -23,10 +23,12 @@ end
 -- Function to copy the content of all visible buffers to the clipboard
 function CopyBuffersToClipboard()
   local result = {}
+  local seen_files = {}
   for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
     if vim.api.nvim_buf_is_valid(bufnr) and vim.api.nvim_buf_get_option(bufnr, 'buflisted') then
       local file_path = vim.api.nvim_buf_get_name(bufnr)
-      if file_path ~= "" then
+      if file_path ~= "" and not seen_files[file_path] then
+        seen_files[file_path] = true
         local relative_path = get_relative_path(file_path)
         table.insert(result, "File: " .. relative_path .. "\n")
         table.insert(result, read_file_content(file_path) .. "\n\n")
@@ -36,7 +38,7 @@ function CopyBuffersToClipboard()
   local aggregated_content = table.concat(result)
   if vim.fn.has('clipboard') == 1 then
     vim.fn.setreg('+', aggregated_content)
-    print("Buffer contents copied to clipboard!")
+    print(string.format("Buffer contents of %d files copied to clipboard!", #result / 2))
   else
     print("Clipboard support not available.")
   end
@@ -51,16 +53,20 @@ function CopyHarpoonFilesToClipboard()
     return
   end
   local result = {}
+  local seen_files = {}
   for _, mark in ipairs(marks) do
     local file_path = mark.filename
-    local relative_path = get_relative_path(file_path)
-    table.insert(result, "File: " .. relative_path .. "\n")
-    table.insert(result, read_file_content(file_path) .. "\n\n")
+    if file_path and not seen_files[file_path] then
+      seen_files[file_path] = true
+      local relative_path = get_relative_path(file_path)
+      table.insert(result, "File: " .. relative_path .. "\n")
+      table.insert(result, read_file_content(file_path) .. "\n\n")
+    end
   end
   local aggregated_content = table.concat(result)
   if vim.fn.has('clipboard') == 1 then
     vim.fn.setreg('+', aggregated_content)
-    print("Harpoon-marked file contents copied to clipboard!")
+    print(string.format("Harpoon-marked file contents of %d files copied to clipboard!", #result / 2))
   else
     print("Clipboard support not available.")
   end
@@ -68,21 +74,25 @@ end
 
 -- Function to copy files from Git changes
 function CopyGitFilesToClipboard()
-  local git_files = vim.fn.systemlist("git diff --name-only HEAD") -- Get modified files <button class="citation-flag" data-index="6">
+  local git_files = vim.fn.systemlist("git diff --name-only HEAD") -- Get modified files
   if #git_files == 0 then
     print("No modified files in Git.")
     return
   end
   local result = {}
+  local seen_files = {}
   for _, file_path in ipairs(git_files) do
-    local relative_path = get_relative_path(file_path)
-    table.insert(result, "File: " .. relative_path .. "\n")
-    table.insert(result, read_file_content(file_path) .. "\n\n")
+    if file_path and not seen_files[file_path] then
+      seen_files[file_path] = true
+      local relative_path = get_relative_path(file_path)
+      table.insert(result, "File: " .. relative_path .. "\n")
+      table.insert(result, read_file_content(file_path) .. "\n\n")
+    end
   end
   local aggregated_content = table.concat(result)
   if vim.fn.has('clipboard') == 1 then
     vim.fn.setreg('+', aggregated_content)
-    print("Git-modified file contents copied to clipboard!")
+    print(string.format("Git-modified file contents of %d files copied to clipboard!", #result / 2))
   else
     print("Clipboard support not available.")
   end
@@ -90,41 +100,34 @@ end
 
 -- Function to copy files from the quickfix list
 function CopyQuickfixFilesToClipboard()
-  local qf_list = vim.fn.getqflist()   -- Get quickfix list entries <button class="citation-flag" data-index="1">
+  local qf_list = vim.fn.getqflist() -- Get quickfix list entries
   if #qf_list == 0 then
     print("Quickfix list is empty.")
     return
   end
-
   local result = {}
-  local seen_files = {}   -- Track files to avoid duplicates
-
+  local seen_files = {} -- Track files to avoid duplicates
   for _, entry in ipairs(qf_list) do
     local bufnr = entry.bufnr
-    local file_path = entry.filename or
-    vim.api.nvim_buf_get_name(bufnr)                                         -- Use filename or derive from bufnr <button class="citation-flag" data-index="2">
-
+    local file_path = entry.filename or vim.api.nvim_buf_get_name(bufnr)
     -- Skip invalid or duplicate files
     if file_path and file_path ~= "" and not seen_files[file_path] then
-      seen_files[file_path] = true       -- Mark file as seen
+      seen_files[file_path] = true -- Mark file as seen
       local relative_path = get_relative_path(file_path)
       table.insert(result, "File: " .. relative_path .. "\n")
       table.insert(result, read_file_content(file_path) .. "\n\n")
     end
   end
-
   if #result == 0 then
     print("No valid files found in the quickfix list.")
     return
   end
-
   -- Combine all content into a single string
   local aggregated_content = table.concat(result)
-
   -- Copy the content to the system clipboard
   if vim.fn.has('clipboard') == 1 then
     vim.fn.setreg('+', aggregated_content)
-    print("Quickfix file contents copied to clipboard!")
+    print(string.format("Quickfix file contents of %d files copied to clipboard!", #result / 2))
   else
     print("Clipboard support not available.")
   end
@@ -132,14 +135,19 @@ end
 
 -- Function to copy files from a specific directory
 function CopyDirectoryFilesToClipboard(directory)
-  local files = vim.fn.glob(directory .. "/*", true, true) -- Get all files in the directory <button class="citation-flag" data-index="9">
+  local current_buffer_path = vim.api.nvim_buf_get_name(0)
+  local default_directory = vim.fn.fnamemodify(current_buffer_path, ":h") -- Parent directory of the current buffer
+  directory = directory or default_directory
+  local files = vim.fn.glob(directory .. "/*", true, true)                -- Get all files in the directory
   if #files == 0 then
     print("No files found in the specified directory.")
     return
   end
   local result = {}
+  local seen_files = {}
   for _, file_path in ipairs(files) do
-    if vim.fn.isdirectory(file_path) == 0 then -- Skip directories
+    if vim.fn.isdirectory(file_path) == 0 and not seen_files[file_path] then -- Skip directories
+      seen_files[file_path] = true
       local relative_path = get_relative_path(file_path)
       table.insert(result, "File: " .. relative_path .. "\n")
       table.insert(result, read_file_content(file_path) .. "\n\n")
@@ -148,7 +156,7 @@ function CopyDirectoryFilesToClipboard(directory)
   local aggregated_content = table.concat(result)
   if vim.fn.has('clipboard') == 1 then
     vim.fn.setreg('+', aggregated_content)
-    print("Directory file contents copied to clipboard!")
+    print(string.format("Directory file contents of %d files copied to clipboard!", #result / 2))
   else
     print("Clipboard support not available.")
   end
