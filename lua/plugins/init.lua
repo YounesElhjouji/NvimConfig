@@ -55,10 +55,6 @@ return {
     },
   },
   {
-    "numtostr/BufOnly.nvim",
-    lazy = false,
-  },
-  {
     "windwp/nvim-ts-autotag",
     event = "InsertEnter",
     dependencies = "nvim-treesitter/nvim-treesitter",

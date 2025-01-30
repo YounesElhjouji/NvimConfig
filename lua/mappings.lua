@@ -42,8 +42,11 @@ map("v", "<leader>pa", '"+p', { desc = "Paste from system clipboard" })
 map("i", "<C-v>", '<C-r>+', { desc = "Paste from system clipboard" })
 
 
--- Close all buffers except current
-map("n", "<leader>q", "<CMD>BufOnly<CR>", { desc = "Close all buffers except current" })
+-- Close mappings
+map("n", "<leader>qo", "<CMD>CloseOthers<CR>", { desc = "Close all tabs except current" })
+map("n", "<leader>qh", "<CMD>CloseLeft<CR>", { desc = "Close all tabs to the left" })
+map("n", "<leader>ql", "<CMD>CloseRight<CR>", { desc = "Close all tabs to the right" })
+map({ "n", "i", "v" }, "<C-q>", "<CMD>qa<CR>", { desc = "Close all" })
 
 -- Vertical nav
 map('n', '<C-u>', '<C-u>zz', { noremap = true, silent = true })

@@ -31,6 +31,7 @@ require("lazy").setup({
 dofile(vim.g.base46_cache .. "defaults")
 dofile(vim.g.base46_cache .. "statusline")
 require "nvchad.autocmds"
+require "configs.tabufline"
 
 vim.schedule(function()
   require "configs"
