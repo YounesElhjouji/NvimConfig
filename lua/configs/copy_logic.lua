@@ -133,30 +133,67 @@ function CopyQuickfixFilesToClipboard()
   end
 end
 
--- Function to copy files from a specific directory
+-- Function to copy files from a specific directory recursively
 function CopyDirectoryFilesToClipboard(directory)
-  local current_buffer_path = vim.api.nvim_buf_get_name(0)
-  local default_directory = vim.fn.fnamemodify(current_buffer_path, ":h") -- Parent directory of the current buffer
-  directory = directory or default_directory
-  local files = vim.fn.glob(directory .. "/*", true, true)                -- Get all files in the directory
-  if #files == 0 then
+  -- If no directory is specified, use the parent directory of the current buffer
+  if directory == "" then
+    local current_file = vim.api.nvim_buf_get_name(0)
+    if current_file == "" then
+      print("No directory specified and no file in the current buffer.")
+      return
+    end
+    directory = vim.fn.fnamemodify(current_file, ":h") -- Get the parent directory
+  end
+
+  -- Ensure the directory exists
+  if not vim.fn.isdirectory(directory) then
+    print("The specified path is not a valid directory.")
+    return
+  end
+
+  -- Recursive function to traverse directories and collect files
+  local function collect_files(dir)
+    local files = {}
+    local items = vim.fn.glob(dir .. "/*", true, true) -- Get all items in the directory
+    for _, item in ipairs(items) do
+      if vim.fn.isdirectory(item) == 1 then
+        -- Recursively collect files from subdirectories
+        local sub_files = collect_files(item)
+        for _, sub_file in ipairs(sub_files) do
+          table.insert(files, sub_file)
+        end
+      else
+        -- Add the file to the list
+        table.insert(files, item)
+      end
+    end
+    return files
+  end
+
+  -- Collect all files recursively
+  local all_files = collect_files(directory)
+
+  -- If no files are found, exit early
+  if #all_files == 0 then
     print("No files found in the specified directory.")
     return
   end
+
+  -- Prepare the result with file contents
   local result = {}
-  local seen_files = {}
-  for _, file_path in ipairs(files) do
-    if vim.fn.isdirectory(file_path) == 0 and not seen_files[file_path] then -- Skip directories
-      seen_files[file_path] = true
-      local relative_path = get_relative_path(file_path)
-      table.insert(result, "File: " .. relative_path .. "\n")
-      table.insert(result, read_file_content(file_path) .. "\n\n")
-    end
+  for _, file_path in ipairs(all_files) do
+    local relative_path = get_relative_path(file_path)
+    table.insert(result, "File: " .. relative_path .. "\n")
+    table.insert(result, read_file_content(file_path) .. "\n\n")
   end
+
+  -- Combine all content into a single string
   local aggregated_content = table.concat(result)
+
+  -- Copy the content to the system clipboard
   if vim.fn.has('clipboard') == 1 then
     vim.fn.setreg('+', aggregated_content)
-    print(string.format("Directory file contents of %d files copied to clipboard!", #result / 2))
+    print(string.format("Copied %d files to clipboard!", #all_files))
   else
     print("Clipboard support not available.")
   end
