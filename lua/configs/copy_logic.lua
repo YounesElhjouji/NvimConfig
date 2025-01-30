@@ -44,34 +44,6 @@ function CopyBuffersToClipboard()
   end
 end
 
--- Function to copy the content of Harpoon-marked files to the clipboard
-function CopyHarpoonFilesToClipboard()
-  local harpoon = require("harpoon")
-  local marks = harpoon.get_mark_config().marks
-  if #marks == 0 then
-    print("No files marked in Harpoon.")
-    return
-  end
-  local result = {}
-  local seen_files = {}
-  for _, mark in ipairs(marks) do
-    local file_path = mark.filename
-    if file_path and not seen_files[file_path] then
-      seen_files[file_path] = true
-      local relative_path = get_relative_path(file_path)
-      table.insert(result, "File: " .. relative_path .. "\n")
-      table.insert(result, read_file_content(file_path) .. "\n\n")
-    end
-  end
-  local aggregated_content = table.concat(result)
-  if vim.fn.has('clipboard') == 1 then
-    vim.fn.setreg('+', aggregated_content)
-    print(string.format("Harpoon-marked file contents of %d files copied to clipboard!", #result / 2))
-  else
-    print("Clipboard support not available.")
-  end
-end
-
 -- Function to copy files from Git changes
 function CopyGitFilesToClipboard()
   local git_files = vim.fn.systemlist("git diff --name-only HEAD") -- Get modified files
@@ -133,67 +105,124 @@ function CopyQuickfixFilesToClipboard()
   end
 end
 
--- Function to copy files from a specific directory recursively
-function CopyDirectoryFilesToClipboard(directory)
-  -- If no directory is specified, use the parent directory of the current buffer
-  if directory == "" then
-    local current_file = vim.api.nvim_buf_get_name(0)
-    if current_file == "" then
-      print("No directory specified and no file in the current buffer.")
-      return
-    end
-    directory = vim.fn.fnamemodify(current_file, ":h") -- Get the parent directory
-  end
-
-  -- Ensure the directory exists
-  if not vim.fn.isdirectory(directory) then
-    print("The specified path is not a valid directory.")
-    return
-  end
-
-  -- Recursive function to traverse directories and collect files
-  local function collect_files(dir)
-    local files = {}
-    local items = vim.fn.glob(dir .. "/*", true, true) -- Get all items in the directory
+-- Shared utility function to recursively collect files from directories
+local function get_all_files(path, seen)
+  local files = {}
+  if vim.fn.isdirectory(path) == 1 then
+    local items = vim.fn.glob(path .. "/*", true, true)
     for _, item in ipairs(items) do
       if vim.fn.isdirectory(item) == 1 then
-        -- Recursively collect files from subdirectories
-        local sub_files = collect_files(item)
-        for _, sub_file in ipairs(sub_files) do
-          table.insert(files, sub_file)
+        local sub_files = get_all_files(item)
+        for _, f in ipairs(sub_files) do
+          table.insert(files, f)
         end
       else
-        -- Add the file to the list
         table.insert(files, item)
       end
     end
-    return files
+  else
+    table.insert(files, path)
   end
 
-  -- Collect all files recursively
-  local all_files = collect_files(directory)
+  return files
+end
 
-  -- If no files are found, exit early
-  if #all_files == 0 then
-    print("No files found in the specified directory.")
+-- Shared function to process multiple paths (files/directories)
+local function process_paths(paths)
+  local all_files = {}
+  for _, path in ipairs(paths) do
+    local files = get_all_files(path)
+    for _, f in ipairs(files) do
+      table.insert(all_files, f)
+    end
+  end
+  return all_files
+end
+
+local function build_content_buffer(files)
+  local result = {}
+  local seen_files = {}
+
+  for _, file_path in ipairs(files) do
+    if file_path and not seen_files[file_path] then
+      seen_files[file_path] = true
+      local relative_path = get_relative_path(file_path)
+      table.insert(result, "File: " .. relative_path .. "\n")
+      table.insert(result, read_file_content(file_path) .. "\n\n")
+    end
+  end
+
+  return result
+end
+
+-- Updated Harpoon function
+function CopyHarpoonFilesToClipboard()
+  local harpoon = require("harpoon")
+  local marks = harpoon.get_mark_config().marks
+  if #marks == 0 then
+    print("No files marked in Harpoon.")
     return
   end
 
-  -- Prepare the result with file contents
-  local result = {}
-  for _, file_path in ipairs(all_files) do
-    local relative_path = get_relative_path(file_path)
-    table.insert(result, "File: " .. relative_path .. "\n")
-    table.insert(result, read_file_content(file_path) .. "\n\n")
+  -- Collect all marked paths
+  local paths = {}
+  for _, mark in ipairs(marks) do
+    if mark.filename then
+      table.insert(paths, mark.filename)
+    end
   end
 
-  -- Combine all content into a single string
+  -- Process paths (files and directories)
+  local all_files = process_paths(paths)
+  if #all_files == 0 then
+    print("No valid files found in Harpoon marks.")
+    return
+  end
+
+  -- Build and copy content
+  local result = build_content_buffer(all_files)
   local aggregated_content = table.concat(result)
 
-  -- Copy the content to the system clipboard
   if vim.fn.has('clipboard') == 1 then
     vim.fn.setreg('+', aggregated_content)
-    print(string.format("Copied %d files to clipboard!", #all_files))
+    print(string.format("Harpoon contents (%d files) copied to clipboard!", #all_files))
+  else
+    print("Clipboard support not available.")
+  end
+end
+
+-- Updated Directory function
+function CopyDirectoryFilesToClipboard(directory)
+  -- Default to current buffer's parent directory if not specified
+  if not directory or directory == "" then
+    local current_file = vim.api.nvim_buf_get_name(0)
+    if current_file == "" then
+      print("No directory specified and no file in current buffer.")
+      return
+    end
+    directory = vim.fn.fnamemodify(current_file, ":h")
+  end
+
+  -- Validate directory
+  if vim.fn.isdirectory(directory) == 0 then
+    print("Invalid directory: " .. directory)
+    return
+  end
+
+  -- Process directory
+  local all_files = process_paths({ directory })
+  if #all_files == 0 then
+    print("No files found in directory: " .. directory)
+    return
+  end
+
+  -- Build and copy content
+  local result = build_content_buffer(all_files)
+  local aggregated_content = table.concat(result)
+
+  if vim.fn.has('clipboard') == 1 then
+    vim.fn.setreg('+', aggregated_content)
+    print(string.format("Directory contents (%d files) copied to clipboard!", #all_files))
   else
     print("Clipboard support not available.")
   end
