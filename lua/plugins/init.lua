@@ -12,6 +12,13 @@ return {
     },
   },
   {
+    "sindrets/diffview.nvim",
+    dependencies = "nvim-lua/plenary.nvim",
+    config = function()
+      require("diffview").setup({})
+    end
+  },
+  {
     "ThePrimeagen/harpoon",
     config = function()
       require("harpoon").setup({

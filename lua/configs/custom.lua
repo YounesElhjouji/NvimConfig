@@ -1,12 +1,31 @@
-vim.api.nvim_create_autocmd({ "VimEnter" }, {
+-- ===========================================================================
+--                             AUTO COMMANDS
+-- ===========================================================================
+
+-- Open NvimTree on VimEnter if opening a directory
+vim.api.nvim_create_autocmd("VimEnter", {
   callback = function(data)
     if vim.fn.isdirectory(data.file) == 1 then
       require('nvim-tree.api').tree.open()
     end
   end,
-  -- this fires on VimEnter regardless of filename, so check the directory
-  desc = "Open NvimTree on VimEnter",
+  desc = "Open NvimTree when opening a directory",
 })
+
+-- Close NvimTree when the cursor leaves its window
+vim.api.nvim_create_autocmd("WinLeave", {
+  pattern = "*",
+  callback = function()
+    if require("nvim-tree.view").is_visible() then
+      vim.cmd("NvimTreeClose")
+    end
+  end,
+  desc = "Close NvimTree when cursor leaves the sidebar",
+})
+
+-- ===========================================================================
+--                            MACRO NOTIFICATIONS
+-- ===========================================================================
 
 local function notify_macro_start()
   local register = vim.fn.reg_recording()
@@ -24,52 +43,65 @@ local function notify_macro_end()
   end
 end
 
--- Create autocommands for macro recording
+-- Auto commands for macro recording notifications
 vim.api.nvim_create_autocmd("RecordingEnter", {
   callback = notify_macro_start,
-  desc = "Notify when macro recording starts"
+  desc = "Notify when macro recording starts",
 })
 
 vim.api.nvim_create_autocmd("RecordingLeave", {
   callback = notify_macro_end,
-  desc = "Notify when macro recording stops"
-})
-
--- Exit nvim tree when leaving its window
-vim.api.nvim_create_autocmd("WinLeave", {
-  pattern = "*",
-  callback = function()
-    if require("nvim-tree.view").is_visible() then
-      vim.cmd("NvimTreeClose")
-    end
-  end,
-  desc = "Close nvim-tree when cursor leaves the sidebar",
-})
-
--- PEP8 settings for Python files
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "python",
-  callback = function()
-    vim.opt_local.tabstop = 4
-    vim.opt_local.shiftwidth = 4
-    vim.opt_local.expandtab = true
-    vim.opt_local.softtabstop = 4
-    vim.opt_local.foldmethod = 'indent'
-  end,
+  desc = "Notify when macro recording stops",
 })
 
 
-vim.api.nvim_create_autocmd("LspAttach", {
-  callback = function(args)
-    local client = vim.lsp.get_client_by_id(args.data.client_id)
-    if client.name == "pyright" then
-      vim.bo[args.buf].tabstop = 4
-      vim.bo[args.buf].shiftwidth = 4
-      vim.bo[args.buf].expandtab = true
-      vim.bo[args.buf].softtabstop = 4
-    end
-  end,
+-- ===========================================================================
+--                      COMPARE CLIPBOARD WITH CURRENT FILE
+-- ===========================================================================
+
+local function CompareWithClipboard()
+  -- Get the current buffer file extension (preserve syntax highlighting)
+  local bufname = vim.api.nvim_buf_get_name(0)
+  local ext = bufname:match("^.+(%..+)$") or ""  -- Extract extension (e.g., ".ts", ".lua")
+  local temp_file = "/tmp/nvim_diff_temp" .. ext -- Preserve extension
+
+  -- Ensure no previous temp file exists
+  os.remove(temp_file)
+
+  -- Open a new scratch buffer and paste clipboard contents
+  vim.cmd('new')
+  vim.cmd('setlocal buftype=nofile')
+  vim.cmd('read !pbpaste') -- Use macOS pbpaste for clipboard content
+
+  -- Save buffer to a temporary file with the correct extension
+  vim.cmd('silent write! ' .. temp_file)
+  vim.cmd('bdelete') -- Close temp buffer
+
+  -- Open a vertical diff split with the current file
+  vim.cmd('vert diffsplit ' .. temp_file)
+end
+
+local function CloseDiffView()
+  vim.cmd('diffoff!') -- Disable diff mode
+  vim.cmd('bdelete!') -- Close temp buffer
+end
+
+vim.api.nvim_create_user_command('DiffClipboard', CompareWithClipboard, {
+  desc = "Compare clipboard content with the current buffer using diff mode",
 })
+
+vim.api.nvim_create_user_command('DiffClose', CloseDiffView, {
+  desc = "Close diff mode and delete temp buffer",
+})
+
+-- Keybindings
+vim.api.nvim_set_keymap('n', '<leader>dc', ':DiffClipboard<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>df', ':DiffClose<CR>', { noremap = true, silent = true })
+
+
+-- ===========================================================================
+--                      COPY FILES HELPERS
+-- ===========================================================================
 
 require("configs.copy_logic")
 

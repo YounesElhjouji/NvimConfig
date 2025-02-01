@@ -12,6 +12,9 @@ end
 vim.opt.rtp:prepend(lazypath)
 require "configs"
 local lazy_config = require "configs.lazy"
+lazy_config.config = function()
+  require("configs.set") -- Apply global settings here
+end
 -- load plugins
 require("lazy").setup({
   {
@@ -25,6 +28,7 @@ require("lazy").setup({
   },
 
   { import = "plugins" },
+
 }, lazy_config)
 
 -- load theme
