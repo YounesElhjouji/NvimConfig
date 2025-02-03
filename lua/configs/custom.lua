@@ -103,14 +103,14 @@ vim.api.nvim_set_keymap('n', '<leader>df', ':DiffClose<CR>', { noremap = true, s
 --                      COPY FILES HELPERS
 -- ===========================================================================
 
-require("configs.copy_logic")
+local copy_commands = require("configs.copy.commands")
 
 -- Create custom commands for copying files
-vim.api.nvim_create_user_command('CopyBuffersToClipboard', CopyBuffersToClipboard, {})
-vim.api.nvim_create_user_command('CopyHarpoonFilesToClipboard', CopyHarpoonFilesToClipboard, {})
-vim.api.nvim_create_user_command('CopyGitFilesToClipboard', CopyGitFilesToClipboard, {})
-vim.api.nvim_create_user_command('CopyQuickfixFilesToClipboard', CopyQuickfixFilesToClipboard, {})
+vim.api.nvim_create_user_command('CopyBuffersToClipboard', copy_commands.copy_buffers_to_clipboard, {})
+vim.api.nvim_create_user_command('CopyHarpoonFilesToClipboard', copy_commands.copy_harpoon_files_to_clipboard, {})
+vim.api.nvim_create_user_command('CopyGitFilesToClipboard', copy_commands.copy_git_files_to_clipboard, {})
+vim.api.nvim_create_user_command('CopyQuickfixFilesToClipboard', copy_commands.copy_quickfix_files_to_clipboard, {})
 vim.api.nvim_create_user_command('CopyDirectoryFilesToClipboard', function(opts)
   local directory = opts.args ~= "" and opts.args or vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":h")
-  CopyDirectoryFilesToClipboard(directory)
+  copy_commands.copy_directory_files_to_clipboard(directory)
 end, { nargs = "?" })

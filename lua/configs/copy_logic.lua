@@ -51,6 +51,68 @@ local function process_paths(paths)
   return all_files
 end
 
+local function read_visible_file_content(file_path)
+  local lines = {}
+
+  -- Check if there's a loaded buffer for this file
+  local bufnr = nil
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_loaded(buf) and vim.api.nvim_buf_get_name(buf) == file_path then
+      bufnr = buf
+      break
+    end
+  end
+
+  if bufnr then
+    -- Check if the buffer is displayed in any window
+    local win_id = nil
+    for _, win in ipairs(vim.api.nvim_list_wins()) do
+      if vim.api.nvim_win_get_buf(win) == bufnr then
+        win_id = win
+        break
+      end
+    end
+
+    -- Function to process lines considering folds
+    local function process_lines()
+      local line_count = vim.api.nvim_buf_line_count(bufnr)
+      local current_line = 1
+
+      while current_line <= line_count do
+        local fold_start = vim.fn.foldclosed(current_line)
+        if fold_start == current_line then
+          -- Add fold header
+          table.insert(lines, vim.api.nvim_buf_get_lines(bufnr, current_line - 1, current_line, false)[1])
+          current_line = vim.fn.foldclosedend(current_line) + 1
+        else
+          -- Add regular line
+          table.insert(lines, vim.api.nvim_buf_get_lines(bufnr, current_line - 1, current_line, false)[1])
+          current_line = current_line + 1
+        end
+      end
+    end
+
+    -- Execute in window context if available
+    if win_id then
+      vim.api.nvim_win_call(win_id, process_lines)
+    else
+      process_lines() -- Try to process folds without window context
+    end
+  else
+    -- Fallback: read from file if buffer not loaded
+    local file = io.open(file_path, "r")
+    if file then
+      for line in file:lines() do
+        table.insert(lines, line)
+      end
+      file:close()
+    else
+      table.insert(lines, "-- File could not be read --")
+    end
+  end
+
+  return table.concat(lines, "\n")
+end
 -- Build a content buffer from a list of files.
 -- Each file is represented as two entries in the returned table:
 -- one for the header and one for its content.
@@ -62,7 +124,7 @@ local function build_content_buffer(files)
       seen_files[file_path] = true
       local relative_path = get_relative_path(file_path)
       table.insert(result, "File: " .. relative_path .. "\n")
-      table.insert(result, read_file_content(file_path) .. "\n\n")
+      table.insert(result, read_visible_file_content(file_path) .. "\n\n")
     end
   end
   return result
