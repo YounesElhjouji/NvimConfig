@@ -1,5 +1,9 @@
 return {
   {
+    'YounesElhjouji/nvim-copy',
+    lazy = false
+  },
+  {
     "folke/noice.nvim",
     event = "VeryLazy",
     config = function()
