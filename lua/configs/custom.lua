@@ -103,14 +103,100 @@ vim.api.nvim_set_keymap('n', '<leader>df', ':DiffClose<CR>', { noremap = true, s
 --                      COPY FILES HELPERS
 -- ===========================================================================
 
+
 local copy_commands = require("configs.copy.commands")
 
--- Create custom commands for copying files
-vim.api.nvim_create_user_command('CopyBuffersToClipboard', copy_commands.copy_buffers_to_clipboard, {})
-vim.api.nvim_create_user_command('CopyHarpoonFilesToClipboard', copy_commands.copy_harpoon_files_to_clipboard, {})
-vim.api.nvim_create_user_command('CopyGitFilesToClipboard', copy_commands.copy_git_files_to_clipboard, {})
-vim.api.nvim_create_user_command('CopyQuickfixFilesToClipboard', copy_commands.copy_quickfix_files_to_clipboard, {})
-vim.api.nvim_create_user_command('CopyDirectoryFilesToClipboard', function(opts)
-  local directory = opts.args ~= "" and opts.args or vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":h")
-  copy_commands.copy_directory_files_to_clipboard(directory)
-end, { nargs = "?" })
+-- Helper function: parse command-line arguments (fargs) into options.
+-- Recognizes:
+--    "nofolds"   => sets preserve_folds = false
+--    "norecurse" => sets recursive = false
+local function parse_flags(args)
+  local opts = {}
+  for _, arg in ipairs(args) do
+    local flag = arg:lower()
+    if flag == "nofolds" then
+      opts.preserve_folds = false
+    elseif flag == "norecurse" then
+      opts.recursive = false
+    end
+  end
+  return opts
+end
+
+-- Create custom commands for copying files.
+-- All commands now accept optional flags via nargs = "*" which are parsed and passed along.
+
+vim.api.nvim_create_user_command(
+  'CopyBuffersToClipboard',
+  function(opts)
+    local flags = parse_flags(opts.fargs or {})
+    copy_commands.copy_buffers_to_clipboard(flags)
+  end,
+  { nargs = "*" }
+)
+
+vim.api.nvim_create_user_command(
+  'CopyHarpoonFilesToClipboard',
+  function(opts)
+    -- For Harpoon, support norecurse and nofolds.
+    local flags = parse_flags(opts.fargs or {})
+    copy_commands.copy_harpoon_files_to_clipboard(flags)
+  end,
+  { nargs = "*" }
+)
+
+vim.api.nvim_create_user_command(
+  'CopyGitFilesToClipboard',
+  function(opts)
+    local flags = parse_flags(opts.fargs or {})
+    copy_commands.copy_git_files_to_clipboard(flags)
+  end,
+  { nargs = "*" }
+)
+
+vim.api.nvim_create_user_command(
+  'CopyQuickfixFilesToClipboard',
+  function(opts)
+    local flags = parse_flags(opts.fargs or {})
+    copy_commands.copy_quickfix_files_to_clipboard(flags)
+  end,
+  { nargs = "*" }
+)
+
+vim.api.nvim_create_user_command(
+  'CopyDirectoryFilesToClipboard',
+  function(opts)
+    local dir = nil
+    local flags = {}
+    -- If at least one argument is provided...
+    if #opts.fargs > 0 then
+      -- Check if the first argument is a valid directory.
+      if vim.fn.isdirectory(opts.fargs[1]) == 1 then
+        dir = opts.fargs[1]
+        -- The remaining arguments (if any) are flags.
+        for i = 2, #opts.fargs do
+          table.insert(flags, opts.fargs[i])
+        end
+      else
+        -- No valid directory provided; use current buffer's directory,
+        -- and treat all arguments as flags.
+        flags = opts.fargs
+      end
+    else
+      -- No arguments passed: use current buffer's directory.
+      dir = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":h")
+    end
+    local flags_opts = parse_flags(flags)
+    copy_commands.copy_directory_files_to_clipboard(dir, flags_opts)
+  end,
+  { nargs = "*" }
+)
+
+vim.api.nvim_create_user_command(
+  'CopyCurrentBufferToClipboard',
+  function(opts)
+    local flags = parse_flags(opts.fargs or {})
+    copy_commands.copy_current_buffer_to_clipboard(flags)
+  end,
+  { nargs = "*" }
+)

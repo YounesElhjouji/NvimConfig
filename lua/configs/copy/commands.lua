@@ -3,8 +3,22 @@ local file_utils = require("configs.copy.file_utils")
 
 local M = {}
 
+-- Helper: merge opts with defaults.
+-- Default preserve_folds is true and default recursive is true.
+local function default_opts(opts)
+  opts = opts or {}
+  if opts.preserve_folds == nil then
+    opts.preserve_folds = true
+  end
+  if opts.recursive == nil then
+    opts.recursive = true
+  end
+  return opts
+end
+
 -- Copy content of all visible buffers to the clipboard.
-function M.copy_buffers_to_clipboard()
+function M.copy_buffers_to_clipboard(opts)
+  opts = default_opts(opts)
   local files = {}
   local seen_files = {}
   for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
@@ -16,21 +30,36 @@ function M.copy_buffers_to_clipboard()
       end
     end
   end
-  clipboard.copy_to_clipboard_from_files(files, "Buffer")
+  clipboard.copy_to_clipboard_from_files(files, "Buffer", { preserve_folds = opts.preserve_folds })
+end
+
+-- Copy the current (focused) buffer to the clipboard.
+function M.copy_current_buffer_to_clipboard(opts)
+  opts = default_opts(opts)
+  local bufnr = vim.api.nvim_get_current_buf()
+  local file_path = vim.api.nvim_buf_get_name(bufnr)
+  if file_path == "" then
+    print("Current buffer is not associated with a file.")
+    return
+  end
+
+  clipboard.copy_to_clipboard_from_files({ file_path }, "Git-modified file", { preserve_folds = opts.preserve_folds })
 end
 
 -- Copy content of files modified in Git to the clipboard.
-function M.copy_git_files_to_clipboard()
+function M.copy_git_files_to_clipboard(opts)
+  opts = default_opts(opts)
   local git_files = vim.fn.systemlist("git diff --name-only HEAD")
   if #git_files == 0 then
     print("No modified files in Git.")
     return
   end
-  clipboard.copy_to_clipboard_from_files(git_files, "Git-modified file")
+  clipboard.copy_to_clipboard_from_files(git_files, "Git-modified file", { preserve_folds = opts.preserve_folds })
 end
 
 -- Copy content of files from the quickfix list to the clipboard.
-function M.copy_quickfix_files_to_clipboard()
+function M.copy_quickfix_files_to_clipboard(opts)
+  opts = default_opts(opts)
   local qf_list = vim.fn.getqflist()
   if #qf_list == 0 then
     print("Quickfix list is empty.")
@@ -51,11 +80,12 @@ function M.copy_quickfix_files_to_clipboard()
     print("No valid files found in the quickfix list.")
     return
   end
-  clipboard.copy_to_clipboard_from_files(files, "Quickfix file")
+  clipboard.copy_to_clipboard_from_files(files, "Quickfix file", { preserve_folds = opts.preserve_folds })
 end
 
 -- Copy content of files marked in Harpoon to the clipboard.
-function M.copy_harpoon_files_to_clipboard()
+function M.copy_harpoon_files_to_clipboard(opts)
+  opts = default_opts(opts)
   local harpoon = require("harpoon")
   local marks = harpoon.get_mark_config().marks
   if #marks == 0 then
@@ -70,16 +100,20 @@ function M.copy_harpoon_files_to_clipboard()
     end
   end
 
-  local all_files = file_utils.process_paths(paths)
+  local all_files = file_utils.process_paths(paths, opts.recursive)
   if #all_files == 0 then
     print("No valid files found in Harpoon marks.")
     return
   end
-  clipboard.copy_to_clipboard_from_files(all_files, "Harpoon")
+  clipboard.copy_to_clipboard_from_files(all_files, "Harpoon", { preserve_folds = opts.preserve_folds })
 end
 
 -- Copy content of files from a directory to the clipboard.
-function M.copy_directory_files_to_clipboard(directory)
+-- Accepts an optional second argument 'opts' with opts.recursive and opts.preserve_folds.
+function M.copy_directory_files_to_clipboard(directory, opts)
+  opts = default_opts(opts)
+  local recursive = opts.recursive
+
   if not directory or directory == "" then
     local current_file = vim.api.nvim_buf_get_name(0)
     if current_file == "" then
@@ -94,12 +128,12 @@ function M.copy_directory_files_to_clipboard(directory)
     return
   end
 
-  local all_files = file_utils.process_paths({ directory })
+  local all_files = file_utils.process_paths({ directory }, recursive)
   if #all_files == 0 then
     print("No files found in directory: " .. directory)
     return
   end
-  clipboard.copy_to_clipboard_from_files(all_files, "Directory")
+  clipboard.copy_to_clipboard_from_files(all_files, "Directory", { preserve_folds = opts.preserve_folds })
 end
 
 return M

@@ -4,8 +4,8 @@ local buffer_utils = require("configs.copy.buffer_utils")
 
 local M = {}
 
--- Build a content buffer from a list of files.
-function M.build_content_buffer(files)
+function M.build_content_buffer(files, opts)
+  opts = opts or {}
   local result = {}
   local seen_files = {}
   for _, file_path in ipairs(files) do
@@ -13,15 +13,18 @@ function M.build_content_buffer(files)
       seen_files[file_path] = true
       local relative_path = utils.get_relative_path(file_path)
       table.insert(result, "File: " .. relative_path .. "\n")
-      table.insert(result, buffer_utils.read_visible_file_content(file_path) .. "\n\n")
+      if opts.preserve_folds == false then
+        table.insert(result, buffer_utils.read_visible_file_content_without_folds(file_path) .. "\n\n")
+      else
+        table.insert(result, buffer_utils.read_visible_file_content_with_folds(file_path) .. "\n\n")
+      end
     end
   end
   return result
 end
 
--- Helper function to build the content from files and copy it to the clipboard.
-function M.copy_to_clipboard_from_files(files, source)
-  local content_buffer = M.build_content_buffer(files)
+function M.copy_to_clipboard_from_files(files, source, opts)
+  local content_buffer = M.build_content_buffer(files, opts)
   if #content_buffer == 0 then
     print("No valid files found for " .. source .. ".")
     return
