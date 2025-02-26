@@ -2,11 +2,12 @@ require("nvim-treesitter.configs").setup {
   ensure_installed = {
     "lua",
     "python",
+    "javascript",
     "typescript",
     "javascriptreact",
     "typescriptreact",
+    "jsx",
     "tsx",
-    "javascript",
     "html",
     "css",
     "hbs"

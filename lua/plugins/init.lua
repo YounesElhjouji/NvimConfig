@@ -1,7 +1,12 @@
 return {
   {
-    'YounesElhjouji/nvim-copy',
-    lazy = false
+    dir = "~/Projects/nvim-copy", -- Path to your local plugin
+    lazy = false,
+    config = function()
+      require("nvim_copy").setup({
+        ignore = { "node_modules/*", "*.log", "build/*", "*/configs/*", "*.toml", "*.md" }
+      })
+    end,
   },
   {
     "folke/noice.nvim",

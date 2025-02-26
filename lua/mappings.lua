@@ -32,7 +32,6 @@ local function write_and_make()
   vim.cmd("wall")
   require("nvchad.term").new { pos = "float", id = "floa", cmd = 'make' }
 end
-map("n", "<leader>m", write_and_make, { desc = "Write all buffers and run make" })
 map({ "n", "i", "v" }, "<C-a>", "<cmd> wall <cr>")
 
 
@@ -92,6 +91,20 @@ map("n", "<leader>4", function() harpoon_ui.nav_file(4) end, { desc = "Go to Har
 -- global replace from clipboard
 map("n", "<C-t>", "ggVGp:w<CR>", { noremap = true, desc = "Replace page with clipboard content and save file" })
 
-
 -- Map <leader>cb to copy all visible buffers' content to clipboard
 map("n", "<leader>cb", "<CMD>CopyBuffersToClipboard<CR>", { desc = "Copy all visible buffers to clipboard" })
+map("n", "<leader>cp", "<CMD>CopyCurrentBufferToClipboard<CR>", { desc = "Copy all visible buffers to clipboard" })
+map("n", "<leader>cg", "<CMD>CopyGitFilesToClipboard<CR>", { desc = "Copy all visible buffers to clipboard" })
+
+
+-- Pasting
+map("v", "p", '"_dP', { noremap = true, silent = true })
+
+-- floating term
+map("n", "<C-h>", function()
+  require("nvchad.term").toggle { pos = "float" }
+end, { desc = "Toggle NvChad float terminal" })
+
+map("t", "<C-h>", function()
+  require("nvchad.term").toggle { pos = "float" }
+end, { desc = "Toggle NvChad float terminal from terminal mode" })

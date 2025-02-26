@@ -15,10 +15,28 @@ for _, lsp in ipairs(servers) do
   }
 end
 
+-- Setup PHP language server (Intelephense)
+lspconfig.intelephense.setup {
+  on_attach = on_attach,
+  on_init = on_init,
+  capabilities = capabilities,
+  filetypes = { "php" },
+  root_dir = lspconfig.util.root_pattern("composer.json", ".git"),
+  settings = {
+    intelephense = {
+      -- Example: Limit file size scanning (in bytes) if needed
+      files = {
+        maxSize = 5000000,
+      },
+      -- Add any additional Intelephense settings here.
+    },
+  },
+}
+
 local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 vim.api.nvim_create_autocmd("BufWritePre", {
   group = augroup,
-  pattern = { "*.py", "*.js*", "*.ts*", "*.lua" },
+  pattern = { "*.py", "*.js*", "*.ts*", "*.lua", "*.php" },
   callback = function()
     vim.lsp.buf.format { async = false }
   end,
@@ -26,26 +44,9 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 
 vim.api.nvim_create_autocmd("BufWritePre", {
   group = augroup,
-  pattern = { "*.py", "*.ts*", "*.js*", "*.lua" },
+  pattern = { "*.py", "*.ts*", "*.js*", "*.lua", "*.php" },
   callback = function()
     local context = { only = { "source.fixAll" } }
     vim.lsp.buf.code_action { context = context, apply = true }
   end,
 })
-
---   cmd = { 'kotlin-language-server' },
---   filetypes = { 'kotlin' },
---   root_dir = lspconfig.util.root_pattern('settings.gradle', 'settings.gradle.kts', '.git'),
---   settings = {
---     kotlin = {
---       compiler = {
---         jvm = {
---           target = "1.8"
---         }
---       }
---     }
---   },
---   on_attach = on_attach
--- }
-
--- auto formatting
