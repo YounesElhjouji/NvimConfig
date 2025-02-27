@@ -15,24 +15,6 @@ for _, lsp in ipairs(servers) do
   }
 end
 
--- Setup PHP language server (Intelephense)
-lspconfig.intelephense.setup {
-  on_attach = on_attach,
-  on_init = on_init,
-  capabilities = capabilities,
-  filetypes = { "php" },
-  root_dir = lspconfig.util.root_pattern("composer.json", ".git"),
-  settings = {
-    intelephense = {
-      -- Example: Limit file size scanning (in bytes) if needed
-      files = {
-        maxSize = 5000000,
-      },
-      -- Add any additional Intelephense settings here.
-    },
-  },
-}
-
 local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 vim.api.nvim_create_autocmd("BufWritePre", {
   group = augroup,

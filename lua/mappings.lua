@@ -28,10 +28,6 @@ map("n", "<leader>cf", ":cfdo %s/<C-r><C-w>//g<CR>", { desc = "Find and replace 
 
 
 -- My write mappings
-local function write_and_make()
-  vim.cmd("wall")
-  require("nvchad.term").new { pos = "float", id = "floa", cmd = 'make' }
-end
 map({ "n", "i", "v" }, "<C-a>", "<cmd> wall <cr>")
 
 
@@ -99,12 +95,3 @@ map("n", "<leader>cg", "<CMD>CopyGitFilesToClipboard<CR>", { desc = "Copy all vi
 
 -- Pasting
 map("v", "p", '"_dP', { noremap = true, silent = true })
-
-map("n", "<leader>j", function()
-  require("nvchad.term").toggle { pos = "vsp" } -- "v" for vertical split
-  vim.cmd("vertical resize 80")
-end, { desc = "Toggle NvChad vertical terminal" })
-
-map("t", "<leader>j", function()
-  require("nvchad.term").toggle { pos = "vsp" }
-end, { desc = "Toggle NvChad vertical terminal from terminal mode" })
