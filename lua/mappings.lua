@@ -100,11 +100,11 @@ map("n", "<leader>cg", "<CMD>CopyGitFilesToClipboard<CR>", { desc = "Copy all vi
 -- Pasting
 map("v", "p", '"_dP', { noremap = true, silent = true })
 
--- floating term
-map("n", "<C-h>", function()
-  require("nvchad.term").toggle { pos = "float" }
-end, { desc = "Toggle NvChad float terminal" })
+map("n", "<leader>j", function()
+  require("nvchad.term").toggle { pos = "vsp" } -- "v" for vertical split
+  vim.cmd("vertical resize 80")
+end, { desc = "Toggle NvChad vertical terminal" })
 
-map("t", "<C-h>", function()
-  require("nvchad.term").toggle { pos = "float" }
-end, { desc = "Toggle NvChad float terminal from terminal mode" })
+map("t", "<leader>j", function()
+  require("nvchad.term").toggle { pos = "vsp" }
+end, { desc = "Toggle NvChad vertical terminal from terminal mode" })
