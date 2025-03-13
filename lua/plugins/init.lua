@@ -9,6 +9,10 @@ return {
     end,
   },
   {
+    "tpope/vim-surround",
+    lazy = false,
+  },
+  {
     "folke/noice.nvim",
     event = "VeryLazy",
     config = function()

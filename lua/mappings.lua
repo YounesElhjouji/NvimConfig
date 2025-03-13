@@ -95,3 +95,5 @@ map("n", "<leader>cg", "<CMD>CopyGitFilesToClipboard<CR>", { desc = "Copy all vi
 
 -- Pasting
 map("v", "p", '"_dP', { noremap = true, silent = true })
+
+--
