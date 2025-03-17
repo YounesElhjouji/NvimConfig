@@ -1,7 +1,7 @@
 require("noice").setup({
   lsp = {
     signature = {
-      enabled = false,
+      enabled = true,
       auto_open = false
     }
   }

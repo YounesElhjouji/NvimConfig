@@ -9,14 +9,12 @@ map({ "n", "x" }, ";", ":", { desc = "CMD enter command mode" })
 map("i", "jk", "<ESC>")
 
 -- -- LSP mappings
--- map("n", "gd", "<CMD>lua vim.lsp.buf.definition()<CR>")
--- map("n", "gD", "<CMD>lua vim.lsp.buf.declaration()<CR>")
--- map("n", "gi", "<CMD>lua vim.lsp.buf.implementation()<CR>")
--- map("n", "gr", "<CMD>lua vim.lsp.buf.references()<CR>")
--- map("n", "K", "<CMD>lua vim.lsp.buf.hover()<CR>")
-map("n", "gR", "<CMD>lua vim.lsp.buf.rename()<CR>")
-map("n", "ga", "<CMD>lua vim.lsp.buf.code_action()<CR>")
--- map("n", "<leader>e", "<CMD>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>")
+-- map("n", "gR", "<CMD>lua vim.lsp.buf.rename()<CR>")
+-- map("n", "ga", "<CMD>lua vim.lsp.buf.code_action()<CR>")
+--
+-- Command-line (c) mode mappings for history navigation:
+map("c", "<C-j>", "<Down>", { desc = "Cmdline: Go to next history entry" })
+map("c", "<C-k>", "<Up>", { desc = "Cmdline: Go to previous history entry" })
 
 -- Quickfix list mappings
 map("n", "]q", ":cnext<CR>", { desc = "Next quickfix item" })
@@ -96,4 +94,19 @@ map("n", "<leader>cg", "<CMD>CopyGitFilesToClipboard<CR>", { desc = "Copy all vi
 -- Pasting
 map("v", "p", '"_dP', { noremap = true, silent = true })
 
---
+-- Hop keybindings
+local hop = require('hop')
+
+map('n', '<leader>k', '<CMD>HopWord<CR>', { desc = 'Hop: Jump to word' })
+
+map('n', '<leader>l', function()
+  hop.hint_lines()
+end, { desc = 'Hop: Jump to line' })
+
+map('n', '<leader>jj', function()
+  hop.hint_char1()
+end, { desc = 'Hop: Jump to character' })
+
+map('n', '<leader>jk', function()
+  hop.hint_char2()
+end, { desc = 'Hop: Jump to character' })

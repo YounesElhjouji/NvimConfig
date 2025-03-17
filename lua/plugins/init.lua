@@ -8,6 +8,14 @@ return {
       })
     end,
   },
+
+  {
+    'smoka7/hop.nvim',
+    version = "*",
+    opts = {
+      keys = 'etovxqpdygfblzhckisuran'
+    }
+  },
   {
     "tpope/vim-surround",
     lazy = false,
