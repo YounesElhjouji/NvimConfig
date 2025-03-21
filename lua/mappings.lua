@@ -1,7 +1,6 @@
 require "nvchad.mappings"
 
 -- add yours here
-
 local map = vim.keymap.set
 
 map({ "n", "x" }, ":", ";", { desc = "Next search movement" })
@@ -9,8 +8,8 @@ map({ "n", "x" }, ";", ":", { desc = "CMD enter command mode" })
 map("i", "jk", "<ESC>")
 
 -- -- LSP mappings
--- map("n", "gR", "<CMD>lua vim.lsp.buf.rename()<CR>")
--- map("n", "ga", "<CMD>lua vim.lsp.buf.code_action()<CR>")
+map("n", "gR", "<CMD>lua vim.lsp.buf.rename()<CR>")
+map("n", "ga", "<CMD>lua vim.lsp.buf.code_action()<CR>")
 --
 -- Command-line (c) mode mappings for history navigation:
 map("c", "<C-j>", "<Down>", { desc = "Cmdline: Go to next history entry" })
@@ -61,9 +60,6 @@ map("n", "yL", "y$", { noremap = true, silent = true, desc = "Yank to the end of
 map("v", "H", "^", { noremap = true, silent = true, desc = "Select to the beginning of the line" })
 map("v", "L", "$", { noremap = true, silent = true, desc = "Select to the end of the line" })
 
--- Magic search
-map("n", "/", "/\\v", { noremap = true, silent = true, desc = "Start search in 'very magic' mode" })
-
 -- Open Diagnostics
 map("n", "<leader>df", vim.diagnostic.open_float,
   { noremap = true, silent = true, desc = "Show diagnostics in a floating window" })
@@ -93,7 +89,6 @@ map("n", "<leader>cg", "<CMD>CopyGitFilesToClipboard<CR>", { desc = "Copy all vi
 
 -- Pasting
 map("v", "p", '"_dP', { noremap = true, silent = true })
-
 -- Hop keybindings
 local hop = require('hop')
 
@@ -110,3 +105,24 @@ end, { desc = 'Hop: Jump to character' })
 map('n', '<leader>jk', function()
   hop.hint_char2()
 end, { desc = 'Hop: Jump to character' })
+
+-- Navigate through changes
+map('n', 'gj', 'g;zz', { noremap = true, silent = true })
+map('n', 'gk', 'g,zz', { noremap = true, silent = true })
+
+
+-- Toggle function to switch lualine on/off.
+function ToggleLualine()
+  if vim.o.laststatus == 0 then
+    vim.o.laststatus = 2 -- 2: always show statusline
+    print("Statusline enabled")
+  else
+    vim.o.laststatus = 0
+    print("Statusline disabled")
+  end
+end
+
+-- Map <leader>ss to toggle the statusline.
+vim.api.nvim_set_keymap("n", "<leader>mm", ":lua ToggleLualine()<CR>", {
+  noremap = true,
+})

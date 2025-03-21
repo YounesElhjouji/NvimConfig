@@ -1,4 +1,5 @@
 return {
+
   {
     dir = "~/Projects/nvim-copy", -- Path to your local plugin
     lazy = false,
@@ -8,7 +9,22 @@ return {
       })
     end,
   },
-
+  {
+    {
+      "nvim-lualine/lualine.nvim",
+      lazy = false,
+    },
+  },
+  {
+    'nvimdev/dashboard-nvim',
+    event = 'VimEnter',
+    config = function()
+      require('dashboard').setup {
+        -- config
+      }
+    end,
+    dependencies = { { 'nvim-tree/nvim-web-devicons' } }
+  },
   {
     'smoka7/hop.nvim',
     version = "*",

@@ -62,3 +62,11 @@ vim.api.nvim_create_autocmd("RecordingLeave", {
   callback = notify_macro_end,
   desc = "Notify when macro recording stops",
 })
+
+-- Remove status line
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function()
+    vim.o.laststatus = 0
+    print("laststatus set to 0")
+  end,
+})
