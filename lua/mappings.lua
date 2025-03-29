@@ -25,12 +25,10 @@ map("n", "<leader>cf", ":cfdo %s/<C-r><C-w>//g<CR>", { desc = "Find and replace 
 
 
 -- My write mappings
-map({ "n", "i", "v" }, "<C-a>", "<cmd> wall <cr>")
+map({ "n", "v" }, "<leader>s", "<cmd> wall <cr>")
 
 
 -- Paste from the system clipboard
-map("n", "<leader>pa", '"+p', { desc = "Paste from system clipboard" })
-map("v", "<leader>pa", '"+p', { desc = "Paste from system clipboard" })
 map("i", "<C-v>", '<C-r>+', { desc = "Paste from system clipboard" })
 
 
@@ -38,6 +36,8 @@ map("i", "<C-v>", '<C-r>+', { desc = "Paste from system clipboard" })
 map("n", "<leader>qo", "<CMD>CloseOthers<CR>", { desc = "Close all tabs except current" })
 map("n", "<leader>qh", "<CMD>CloseLeft<CR>", { desc = "Close all tabs to the left" })
 map("n", "<leader>ql", "<CMD>CloseRight<CR>", { desc = "Close all tabs to the right" })
+map({ "n" }, "<leader>qq", "<CMD>qa<CR>", { desc = "Close all" })
+map({ "n" }, "<leader>qs", "<CMD>qa<CR>", { desc = "Close all" })
 map({ "n", "i", "v" }, "<C-q>", "<CMD>qa<CR>", { desc = "Close all" })
 
 -- Vertical nav
@@ -51,12 +51,6 @@ map('t', '<C-t>', '<C-\\><C-n>', { noremap = true, silent = true, desc = "Switch
 map("n", "G", "Gzz", { noremap = true, silent = true, desc = "Go to end of file and center" })
 map("n", "H", "^", { noremap = true, silent = true, desc = "Move to the beginning of the line" })
 map("n", "L", "$", { noremap = true, silent = true, desc = "Move to the end of the line" })
-map("n", "dH", "d^", { noremap = true, silent = true, desc = "Delete to the beginning of the line" })
-map("n", "dL", "d$", { noremap = true, silent = true, desc = "Delete to the end of the line" })
-map("n", "cH", "c^", { noremap = true, silent = true, desc = "Change to the beginning of the line" })
-map("n", "cL", "c$", { noremap = true, silent = true, desc = "Change to the end of the line" })
-map("n", "yH", "y^", { noremap = true, silent = true, desc = "Yank to the beginning of the line" })
-map("n", "yL", "y$", { noremap = true, silent = true, desc = "Yank to the end of the line" })
 map("v", "H", "^", { noremap = true, silent = true, desc = "Select to the beginning of the line" })
 map("v", "L", "$", { noremap = true, silent = true, desc = "Select to the end of the line" })
 
@@ -89,27 +83,24 @@ map("n", "<leader>cg", "<CMD>CopyGitFilesToClipboard<CR>", { desc = "Copy all vi
 
 -- Pasting
 map("v", "p", '"_dP', { noremap = true, silent = true })
+
 -- Hop keybindings
 local hop = require('hop')
 
 map('n', '<leader>k', '<CMD>HopWord<CR>', { desc = 'Hop: Jump to word' })
-
 map('n', '<leader>l', function()
   hop.hint_lines()
 end, { desc = 'Hop: Jump to line' })
-
 map('n', '<leader>jj', function()
   hop.hint_char1()
 end, { desc = 'Hop: Jump to character' })
-
 map('n', '<leader>jk', function()
   hop.hint_char2()
 end, { desc = 'Hop: Jump to character' })
 
 -- Navigate through changes
-map('n', 'gj', 'g;zz', { noremap = true, silent = true })
-map('n', 'gk', 'g,zz', { noremap = true, silent = true })
-
+map('n', '[c', 'g;zz', { noremap = true, silent = true, desc = "Navigate to previous changed line" })
+map('n', ']c', 'g,zz', { noremap = true, silent = true, desc = "Navigate to previous changed line" })
 
 -- Toggle function to switch lualine on/off.
 function ToggleLualine()
@@ -126,3 +117,13 @@ end
 vim.api.nvim_set_keymap("n", "<leader>mm", ":lua ToggleLualine()<CR>", {
   noremap = true,
 })
+
+-- telescope find files single key
+vim.keymap.set('n', 'F', '<Cmd>Telescope find_files<CR>', { desc = 'Telescope find files' })
+
+map("n", "dH", "d^", { noremap = true, silent = true, desc = "Delete to the beginning of the line" })
+map("n", "dL", "d$", { noremap = true, silent = true, desc = "Delete to the end of the line" })
+map("n", "cH", "c^", { noremap = true, silent = true, desc = "Change to the beginning of the line" })
+map("n", "cL", "c$", { noremap = true, silent = true, desc = "change to the end of the line" })
+map("n", "yH", "y^", { noremap = true, silent = true, desc = "Yank to the beginning of the line" })
+map("n", "yL", "y$", { noremap = true, silent = true, desc = "Yank to the end of the line" })

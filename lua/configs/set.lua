@@ -22,6 +22,14 @@ vim.opt.colorcolumn = "80"
 vim.opt.ignorecase = false
 vim.opt.smartcase = false
 
+-- Spell settings
+vim.opt.spell = true
+vim.opt.spelllang = "en"
+vim.api.nvim_set_hl(0, "SpellBad", {
+  undercurl = false,
+  underdotted = true
+})
+
 -- Fold config
 vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "nvim_treesitter#foldexpr()"

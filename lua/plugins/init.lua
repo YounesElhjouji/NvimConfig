@@ -1,5 +1,4 @@
 return {
-
   {
     dir = "~/Projects/nvim-copy", -- Path to your local plugin
     lazy = false,
@@ -10,20 +9,20 @@ return {
     end,
   },
   {
-    {
-      "nvim-lualine/lualine.nvim",
-      lazy = false,
-    },
-  },
-  {
     'nvimdev/dashboard-nvim',
     event = 'VimEnter',
     config = function()
-      require('dashboard').setup {
-        -- config
-      }
+      require("configs.dashboard")
     end,
     dependencies = { { 'nvim-tree/nvim-web-devicons' } }
+  },
+  {
+    'echasnovski/mini.nvim',
+    version = '*',
+    lazy = false,
+    config = function()
+      require('mini.ai').setup()
+    end
   },
   {
     'smoka7/hop.nvim',
@@ -49,11 +48,10 @@ return {
     },
   },
   {
-    "sindrets/diffview.nvim",
-    dependencies = "nvim-lua/plenary.nvim",
-    config = function()
-      require("diffview").setup({})
-    end
+    "nvzone/typr",
+    dependencies = "nvzone/volt",
+    opts = {},
+    cmd = { "Typr", "TyprStats" },
   },
   {
     "ThePrimeagen/harpoon",
