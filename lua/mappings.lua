@@ -37,7 +37,7 @@ map("n", "<leader>qo", "<CMD>CloseOthers<CR>", { desc = "Close all tabs except c
 map("n", "<leader>qh", "<CMD>CloseLeft<CR>", { desc = "Close all tabs to the left" })
 map("n", "<leader>ql", "<CMD>CloseRight<CR>", { desc = "Close all tabs to the right" })
 map({ "n" }, "<leader>qq", "<CMD>qa<CR>", { desc = "Close all" })
-map({ "n" }, "<leader>qs", "<CMD>qa<CR>", { desc = "Close all" })
+map({ "n" }, "<leader>qs", "<CMD>wqa<CR>", { desc = "Save and Close all" })
 map({ "n", "i", "v" }, "<C-q>", "<CMD>qa<CR>", { desc = "Close all" })
 
 -- Vertical nav
@@ -121,9 +121,9 @@ vim.api.nvim_set_keymap("n", "<leader>mm", ":lua ToggleLualine()<CR>", {
 -- telescope find files single key
 vim.keymap.set('n', 'F', '<Cmd>Telescope find_files<CR>', { desc = 'Telescope find files' })
 
-map("n", "dH", "d^", { noremap = true, silent = true, desc = "Delete to the beginning of the line" })
-map("n", "dL", "d$", { noremap = true, silent = true, desc = "Delete to the end of the line" })
-map("n", "cH", "c^", { noremap = true, silent = true, desc = "Change to the beginning of the line" })
-map("n", "cL", "c$", { noremap = true, silent = true, desc = "change to the end of the line" })
-map("n", "yH", "y^", { noremap = true, silent = true, desc = "Yank to the beginning of the line" })
-map("n", "yL", "y$", { noremap = true, silent = true, desc = "Yank to the end of the line" })
+map("n", "dh", "d^", { noremap = true, silent = true, desc = "Delete to the beginning of the line" })
+map("n", "dl", "d$", { noremap = true, silent = true, desc = "delete to the end of the line" })
+map("n", "ch", "c^", { noremap = true, silent = true, desc = "Change to the beginning of the line" })
+map("n", "cl", "c$", { noremap = true, silent = true, desc = "change to the end of the line" })
+map("n", "yh", "y^", { noremap = true, silent = true, desc = "Yank to the beginning of the line" })
+map("n", "yl", "y$", { noremap = true, silent = true, desc = "Yank to the end of the line" })

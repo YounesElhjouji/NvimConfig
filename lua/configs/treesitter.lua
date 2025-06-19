@@ -10,7 +10,8 @@ require("nvim-treesitter.configs").setup {
     "tsx",
     "html",
     "css",
-    "hbs"
+    "hbs",
+    "prisma"
   }, -- or other languages you use
   highlight = {
     enable = true,

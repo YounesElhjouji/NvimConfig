@@ -39,3 +39,6 @@ vim.opt.foldnestmax = 4
 
 -- Visual
 vim.opt.colorcolumn = ""
+
+-- timeout
+vim.opt.timeoutlen = 500

@@ -1,10 +1,18 @@
 return {
   {
+    "nvchad/base46",
+    lazy = false,
+    priority = 1000,
+    build = function()
+      require("base46").load_all_highlights()
+    end,
+  },
+  {
     dir = "~/Projects/nvim-copy", -- Path to your local plugin
     lazy = false,
     config = function()
       require("nvim_copy").setup({
-        ignore = { "node_modules/*", "*.log", "build/*", "*/configs/*", "*.toml", "*.md" }
+        ignore = { "node_modules/*", "*.log", "build/*", "*/configs/*", "*.toml", "*.md", "*__pycache__*", "*venv*" }
       })
     end,
   },

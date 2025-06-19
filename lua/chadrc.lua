@@ -2,9 +2,6 @@
 local M = {}
 
 M.ui = {
-  theme = "catppuccin",
-}
-M.base46 = {
-  transparency = true,
+  theme = "default-light",
 }
 return M
